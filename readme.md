@@ -1,5 +1,5 @@
 ```
-           Historical Prices ───► ARIMA ───┐
+          Historical Prices ───► ARIMA ───┐
                                           │
            Time Series Data ───►  LSTM ───┤
                                           │
