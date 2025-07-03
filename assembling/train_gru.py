@@ -1,4 +1,3 @@
-# train_gru.py
 import pandas as pd
 import numpy as np
 import torch
@@ -8,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 from copy import deepcopy as dc
 import os
 
-def prepare_dataframe_for_gru(df, n_steps): # Renamed function for clarity
+def prepare_dataframe_for_gru(df, n_steps):
     df = dc(df)
     df.set_index('Date', inplace=True)
     for i in range(1, n_steps + 1):
@@ -32,12 +31,12 @@ class GRUModel(nn.Module):
 def train_gru_model():
     print("--- Starting GRU Model Training ---")
 
-    # 1. Data Preprocessing (Identical to LSTM's for consistency)
+    # Data Preprocessing (Identical to LSTM's for consistency)
     data = pd.read_csv("AMZN.csv")[['Date', 'Close']]
     data['Date'] = pd.to_datetime(data['Date'])
 
     lookback = 7
-    shift_df = prepare_dataframe_for_gru(data, lookback) # Using the renamed function
+    shift_df = prepare_dataframe_for_gru(data, lookback)
 
     scaler = MinMaxScaler(feature_range=(-1, 1))
     shift_df_np = scaler.fit_transform(shift_df.values)
@@ -56,12 +55,12 @@ def train_gru_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"GRU training on device: {device}")
 
-    # 2. GRU Model Setup
+    
     model = GRUModel(input_size=1, hidden_size=32, output_size=1, num_layers=2).to(device)
     loss_function = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    # 3. Training Loop
+
     epochs = 50
     for epoch in range(epochs):
         model.train()
