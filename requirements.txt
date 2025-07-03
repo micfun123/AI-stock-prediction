@@ -1,0 +1,18 @@
+# Core
+pandas
+numpy
+matplotlib
+requests
+python-dotenv
+ipykernel
+
+# PyTorch
+torch>=2.0
+torchvision
+torchaudio
+
+# Sklearn & preprocessing
+scikit-learn
+
+# For saving/plotting model internals
+xgboost
