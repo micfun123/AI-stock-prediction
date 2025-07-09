@@ -16,3 +16,5 @@ scikit-learn
 
 # For saving/plotting model internals
 xgboost
+
+statsmodels

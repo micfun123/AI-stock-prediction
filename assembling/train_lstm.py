@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
+import torch.optim as optim
 from sklearn.preprocessing import MinMaxScaler
 from copy import deepcopy as dc
 import os
@@ -31,6 +32,7 @@ class LSTM(nn.Module):
 def train_lstm_model():
     print("--- Starting LSTM Model Training ---")
 
+    # 1. Data Preprocessing
     data = pd.read_csv("AMZN.csv")[['Date', 'Close']]
     data['Date'] = pd.to_datetime(data['Date'])
 
@@ -54,7 +56,7 @@ def train_lstm_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"LSTM training on device: {device}")
 
-   
+    # 2. Model Initialization and Training
     model = LSTM(input_size=1, hidden_size=32, num_layers=2, output_size=1).to(device)
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -62,7 +64,6 @@ def train_lstm_model():
     batch_size = 16
     train_dataset = TensorDataset(X_train, Y_train)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
     
     epochs = 50
     for epoch in range(epochs):
@@ -79,9 +80,42 @@ def train_lstm_model():
         if epoch % 10 == 0 or epoch == epochs - 1:
             print(f"LSTM Epoch {epoch+1}/{epochs}, Train Loss: {running_loss / len(train_loader):.4f}")
 
+    # 3. Save Model
     torch.save(model.state_dict(), 'lstm_model.pth')
     print("LSTM Model saved to 'lstm_model.pth'.")
     print("--- LSTM Model Training Complete ---")
+
+    # 4. Generate and Save Predictions
+    print("\n--- Generating LSTM Predictions ---")
+    model.eval() # Set model to evaluation mode
+
+    X_test = torch.tensor(X_test_np.reshape((-1, lookback, 1)).copy()).float().to(device)
+
+    with torch.no_grad():
+        test_predictions = model(X_test)
+    
+    # Inverse transform predictions to get actual price values
+    inversed_preds_dummy = np.zeros((len(test_predictions), len(shift_df.columns)))
+    inversed_preds_dummy[:, 0] = test_predictions.cpu().numpy().flatten()
+    inversed_preds = scaler.inverse_transform(inversed_preds_dummy)[:, 0]
+
+    # Create predictions directory if it doesn't exist
+    if not os.path.exists('predictions'):
+        os.makedirs('predictions')
+
+    np.save('predictions/lstm_predictions.npy', inversed_preds)
+    print("LSTM predictions saved to 'predictions/lstm_predictions.npy'")
+
+    # Save the corresponding actual values for the test set
+    inversed_actuals_dummy = np.zeros((len(Y_test_np), len(shift_df.columns)))
+    inversed_actuals_dummy[:, 0] = Y_test_np
+    inversed_actuals = scaler.inverse_transform(inversed_actuals_dummy)[:, 0]
+    
+    # Save actuals only once from one of the scripts
+    if not os.path.exists('predictions/actuals.npy'):
+      np.save('predictions/actuals.npy', inversed_actuals)
+      print("Actual values for the test set saved to 'predictions/actuals.npy'")
+
 
 if __name__ == '__main__':
     train_lstm_model()
