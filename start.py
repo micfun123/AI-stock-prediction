@@ -49,7 +49,7 @@ def main():
     np.save(os.path.join(PREDICTIONS_DIR, "arima_predictions.npy"), arima_preds)
 
     train_meta_learner(preds_matrix, actuals)
-    evaluate_meta_learner(preds_matrix, actuals, data.index[-min_len:])
+    evaluate_meta_learner(preds_matrix, actuals, data.index[-min_len:], scaler)
 
 if __name__ == "__main__":
     main()
