@@ -6,9 +6,9 @@ import os
 import matplotlib.pyplot as plt
 import yfinance as yf
 
-from train_lstm import train_lstm_model
-from train_gru import train_gru_model
-from train_arima import train_arima_model
+from learners.train_lstm import train_lstm_model
+from learners.train_gru import train_gru_model
+from learners.train_arima import train_arima_model
 
 if __name__ == "__main__":
     if not os.path.exists("AMZN.csv"):
