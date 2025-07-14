@@ -1,27 +1,36 @@
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
-def load_and_preprocess_data(filepath, column="Close", scale_range=(0, 1)):
-    """
-    Loads a CSV time series file and scales the selected column.
+def load_and_preprocess_data(filepath, column="Close", scale_range=(0,1)):
+    try:
+        # Skip first 3 lines, set columns explicitly
+        df = pd.read_csv(
+            filepath,
+            skiprows=3,
+            names=['Date', 'Price', 'Close', 'High', 'Low', 'Open', 'Volume']
+        )
 
-    Args:
-        filepath (str): Path to CSV file.
-        column (str): Which column to use for modeling (default = "Close").
-        scale_range (tuple): MinMax scale range.
+        # Parse Date column
+        df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
-    Returns:
-        scaled_data (np.ndarray): Scaled time series data.
-        scaler (MinMaxScaler): Fitted scaler object for inverse transforms.
-    """
-    df = pd.read_csv(filepath)
-    
-    if column not in df.columns:
-        raise ValueError(f"Column '{column}' not found in dataset. Available columns: {df.columns.tolist()}")
+        # Drop rows with invalid date or NaN in target column
+        df.dropna(subset=['Date', column], inplace=True)
 
-    values = df[column].values.reshape(-1, 1)
-    scaler = MinMaxScaler(feature_range=scale_range)
-    scaled_data = scaler.fit_transform(values).flatten()
+        # Set Date as index
+        df.set_index('Date', inplace=True)
 
-    return scaled_data, scaler
+        # Convert target column to numeric (just in case)
+        df[column] = pd.to_numeric(df[column], errors='coerce')
+
+        values = df[column].values.reshape(-1,1)
+
+        scaler = MinMaxScaler(feature_range=scale_range)
+        scaled_data = scaler.fit_transform(values).flatten()
+
+        df[f"{column}_scaled"] = scaled_data
+
+        return df, scaler
+
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        raise

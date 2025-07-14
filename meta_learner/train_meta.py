@@ -32,7 +32,7 @@ def train_meta_learner(X, y):
 def evaluate_meta_learner(X, y):
     model = xgb.XGBRegressor()
     model.load_model('meta_learner/xgboost_meta_learner.json')
-    _, X_test, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     preds = model.predict(X_test)
 
