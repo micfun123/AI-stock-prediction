@@ -29,32 +29,42 @@ def train_meta_learner(X, y):
 
     return model, X_test, y_test
 
-def evaluate_meta_learner(X, y):
+
+def evaluate_meta_learner(X, y, dates=None):
     model = xgb.XGBRegressor()
     model.load_model('meta_learner/xgboost_meta_learner.json')
-    _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Don't shuffle when splitting time series data
+    _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=False)
 
     preds = model.predict(X_test)
-
     mse = mean_squared_error(y_test, preds)
-    rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_test, preds)
     mape = mean_absolute_percentage_error(y_test, preds)
     r2 = r2_score(y_test, preds)
 
-    print(f"Ensemble MSE:  {mse:.4f}")
-    print(f"Ensemble RMSE: {rmse:.4f}")
-    print(f"Ensemble MAE:  {mae:.4f}")
-    print(f"Ensemble MAPE: {mape:.2%}")
-    print(f"Ensemble R-squared: {r2:.4f}")
+    print(f"Meta Learner Evaluation:\n"
+          f"Mean Squared Error: {mse:.4f}\n"
+          f"Mean Absolute Error: {mae:.4f}\n"
+          f"Mean Absolute Percentage Error: {mape:.4f}\n"
+          f"R^2 Score: {r2:.4f}\n")
 
-    # Plot
     plt.figure(figsize=(14, 7))
-    plt.plot(y_test, label='Actual Prices', color='green')
-    plt.plot(preds, label='XGBoost Ensemble Predictions', linestyle='--', color='blue')
-    plt.title('XGBoost Ensemble Forecast vs Actual Price')
-    plt.xlabel('Time Step')
-    plt.ylabel('Price (USD)')
+
+    if dates is not None and len(dates) == len(y):
+        _, test_dates = train_test_split(dates, test_size=0.2, random_state=42, shuffle=False)
+        plt.plot(test_dates, y_test, label='Actual Prices', color='green')
+        plt.plot(test_dates, preds, label='Predicted Prices', color='blue', linestyle='--')
+        plt.xlabel('Date')
+    else:
+        plt.plot(y_test, label='Actual Prices', color='green')
+        plt.plot(preds, label='Predicted Prices', color='blue', linestyle='--')
+        plt.xlabel('Time Step')
+
+    plt.title('XGBoost Meta-Learner: Predictions vs Actual')
+    plt.ylabel('Scaled Price')
     plt.legend()
     plt.grid(True)
+    plt.tight_layout()
     plt.show()
+
