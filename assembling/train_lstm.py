@@ -16,7 +16,7 @@ def prepare_dataframe_for_lstm(df, n_steps):
     df.dropna(inplace=True)
     return df
 
-class LSTM(nn.Module):
+class LSTM(nn.Module):  
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTM, self).__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
@@ -32,8 +32,11 @@ class LSTM(nn.Module):
 def train_lstm_model():
     print("--- Starting LSTM Model Training ---")
 
-    # 1. Data Preprocessing
-    data = pd.read_csv("AMZN.csv")[['Date', 'Close']]
+    # Data Preprocessing
+    df = pd.read_csv("AMZN.csv", skiprows=3)
+    df.columns = ['Date', 'Close', 'High', 'Low', 'Open', 'Volume']
+    df['Date'] = pd.to_datetime(df['Date'])
+    data = df[['Date', 'Close']]
     data['Date'] = pd.to_datetime(data['Date'])
 
     lookback = 7
@@ -80,14 +83,14 @@ def train_lstm_model():
         if epoch % 10 == 0 or epoch == epochs - 1:
             print(f"LSTM Epoch {epoch+1}/{epochs}, Train Loss: {running_loss / len(train_loader):.4f}")
 
-    # 3. Save Model
+    
     torch.save(model.state_dict(), 'lstm_model.pth')
     print("LSTM Model saved to 'lstm_model.pth'.")
     print("--- LSTM Model Training Complete ---")
 
-    # 4. Generate and Save Predictions
+    # Generate and Save Predictions
     print("\n--- Generating LSTM Predictions ---")
-    model.eval() # Set model to evaluation mode
+    model.eval()
 
     X_test = torch.tensor(X_test_np.reshape((-1, lookback, 1)).copy()).float().to(device)
 
@@ -99,7 +102,7 @@ def train_lstm_model():
     inversed_preds_dummy[:, 0] = test_predictions.cpu().numpy().flatten()
     inversed_preds = scaler.inverse_transform(inversed_preds_dummy)[:, 0]
 
-    # Create predictions directory if it doesn't exist
+    
     if not os.path.exists('predictions'):
         os.makedirs('predictions')
 
