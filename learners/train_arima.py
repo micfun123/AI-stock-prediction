@@ -11,8 +11,8 @@ from statsmodels.tools.sm_exceptions import HessianInversionWarning
 class ARIMAModel:
     def __init__(self):
         self.config = {
-            "symbols": ['AMZN', '^GSPC', '^VIX', 'AAPL', '^TNX'],
-            "feature_cols": ['GSPC', 'VIX', 'AAPL', 'TNX'],
+            "symbols": ['AMZN', '^GSPC', '^VIX', 'SHOP', '^TNX'],
+            "feature_cols": ['GSPC', 'VIX', 'SHOP', 'TNX'],
             "target_col": 'AMZN',
             "start_date": '2018-01-01',
             "end_date": '2024-12-31',
