@@ -9,7 +9,7 @@ import os
 class RandomForestModel:
     def __init__(self,split_ratio=0.80):
         self.config = {
-            'TICKER': '^IXIC',
+            'TICKER': 'AMZN',
             'START_DATE': "2017-01-01",
             'END_DATE': "2022-12-31",
             'LOOKBACK_LAGS': [1, 2, 3, 5, 7, 14, 21, 30, 60],
