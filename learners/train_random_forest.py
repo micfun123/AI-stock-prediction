@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import os
 
 class RandomForestModel:
-    def __init__(self):
+    def __init__(self,split_ratio=0.80):
         self.config = {
             'TICKER': 'AMZN',
             'START_DATE': "2017-01-01",
             'END_DATE': "2022-12-31",
             'LOOKBACK_LAGS': [1, 2, 3, 5, 7, 14, 21, 30, 60],
-            'TRAIN_TEST_SPLIT_RATIO': 0.95, # Matched to your other models
+            'TRAIN_TEST_SPLIT_RATIO': split_ratio, # Matched to your other models
             'EXTERNAL_TICKERS': ['^GSPC', '^VIX', '^TNX', 'SHOP'],
             'RF_PARAMS': {
                 'n_estimators': 500,
@@ -115,14 +115,14 @@ class RandomForestModel:
             np.save('predictions/actuals.npy', y_test.values)
             print("Actual values for the test set saved to 'predictions/actuals.npy'")
 
-def train_random_forest_model():
+def train_random_forest_model(split_ratio):
     """
     Main function to orchestrate the Random Forest model training and prediction process.
     This function will be called by your start.py script.
     """
     print("--- Starting Random Forest Model Training and Prediction ---")
     
-    model_handler = RandomForestModel()
+    model_handler = RandomForestModel(split_ratio)
     
     # 1. Get and process data
     combined_data = model_handler.fetch_and_merge_data()

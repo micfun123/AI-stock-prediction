@@ -12,7 +12,7 @@ from learners.train_random_forest import train_random_forest_model
 
 DATA_PATH = "data/AMZN.csv"
 PREDICTIONS_DIR = "predictions"
-split_ratio = 0.95  
+split_ratio = 0.80
 
 def download_data_if_missing(path, ticker="AMZN", start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
@@ -33,8 +33,8 @@ def main():
 
     lstm_model, lstm_preds = train_lstm_model(data, split_ratio)
     gru_model, gru_preds = train_gru_model(data, split_ratio)
-    arima_model, arima_preds = train_arima_model()
-    rf_model, rf_preds = train_random_forest_model()
+    arima_model, arima_preds = train_arima_model(split_ratio)
+    rf_model, rf_preds = train_random_forest_model(split_ratio)
 
     min_len = min(len(lstm_preds), len(gru_preds), len(arima_preds), len(rf_preds))
     lstm_preds = lstm_preds[-min_len:]
