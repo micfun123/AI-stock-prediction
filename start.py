@@ -12,7 +12,7 @@ from meta_learner.train_meta import train_meta_learner, evaluate_meta_learner
 DATA_PATH = "data/AMZN.csv"
 PREDICTIONS_DIR = "predictions"
 
-def download_data_if_missing(path, ticker="AMZN", start="2017-01-01", end="2024-12-31"):
+def download_data_if_missing(path, ticker="AMZN", start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         print(f"{os.path.basename(path)} not found, downloading...")
