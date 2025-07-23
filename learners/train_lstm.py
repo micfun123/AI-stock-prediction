@@ -47,7 +47,7 @@ def prepare_dataframe_for_lstm(df, n_steps):
 
     return df
 
-def train_lstm_model(data):
+def train_lstm_model(data, split_ratio=0.95):
     print("--- Starting LSTM Model Training ---")
     lookback = 7
     shift_df = prepare_dataframe_for_lstm(data, lookback)  # returns dataframe with just Close_scaled + lag cols
@@ -60,7 +60,7 @@ def train_lstm_model(data):
 
     X = np.flip(X, axis=1)  # Flip to match LSTM input order
 
-    split_index = int(len(X) * 0.95)
+    split_index = int(len(X) * split_ratio)
     X_train_np, X_test_np = X[:split_index], X[split_index:]
     Y_train_np, Y_test_np = Y[:split_index], Y[split_index:]
 

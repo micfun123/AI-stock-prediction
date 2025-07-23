@@ -48,7 +48,7 @@ def prepare_dataframe_for_gru(df, n_steps):
     return df
 
 
-def train_gru_model(data):
+def train_gru_model(data, split_ratio=0.95):
     print("--- Starting GRU Model Training ---")
 
     lookback = 7
@@ -61,7 +61,7 @@ def train_gru_model(data):
     Y = shift_df_np[:, 0]
     X = np.flip(X, axis=1)
 
-    split_index = int(len(X) * 0.95)
+    split_index = int(len(X) * split_ratio)
     X_train_np, X_test_np = X[:split_index], X[split_index:]
     Y_train_np, Y_test_np = Y[:split_index], Y[split_index:]
 

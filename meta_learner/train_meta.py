@@ -35,7 +35,7 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None):
     model.load_model('meta_learner/xgboost_meta_learner.json')
 
     # Time series split — no shuffling
-    _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=False)
+    _, X_test, _, y_test = train_test_split(X, y, test_size=0.40, random_state=42, shuffle=False) 
     preds = model.predict(X_test)
 
     # Inverse transform if scaler provided
@@ -57,21 +57,23 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None):
     print(f"Mean Absolute Percentage Error: {mape:.4f}")
     print(f"R^2 Score: {r2:.4f}")
 
-    plt.figure(figsize=(14, 7))
-    if dates is not None and len(dates) == len(y):
-        _, test_dates = train_test_split(dates, test_size=0.2, random_state=42, shuffle=False)
-        plt.plot(test_dates, y_test_inv, label='Actual Prices', color='green')
-        plt.plot(test_dates, preds_inv, label='Predicted Prices', linestyle='--', color='blue')
+    if dates is not None:
+        plt.figure(figsize=(14, 7))
+        plt.plot(dates[-len(y_test_inv):], y_test_inv, label='Actual', color='blue')
+        plt.plot(dates[-len(preds_inv):], preds_inv, label='Predicted', color='orange')
+        plt.title('Meta Learner Predictions vs Actuals')
         plt.xlabel('Date')
+        plt.ylabel('Value')
+        plt.legend()
+        plt.show()
     else:
-        plt.plot(y_test_inv, label='Actual Prices', color='green')
-        plt.plot(preds_inv, label='Predicted Prices', linestyle='--', color='blue')
-        plt.xlabel('Time Step')
-
-    plt.title('XGBoost Meta-Learner: Predictions vs Actual (Real Prices)')
-    plt.ylabel('Price (USD)')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
+        plt.figure(figsize=(14, 7))
+        plt.plot(y_test_inv, label='Actual', color='blue')
+        plt.plot(preds_inv, label='Predicted', color='orange')
+        plt.title('Meta Learner Predictions vs Actuals')
+        plt.xlabel('Index')
+        plt.ylabel('Value')
+        plt.legend()
+        plt.show()
+        
 
