@@ -10,11 +10,15 @@ from learners.train_arima import train_arima_model
 from meta_learner.train_meta import train_meta_learner, evaluate_meta_learner
 from learners.train_random_forest import train_random_forest_model
 
-DATA_PATH = "data/AMZN.csv"
+
+
+TICKER = "AAPL"
+DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
 split_ratio = 0.80
+EXTERNAL_TICKERS = ['^GSPC', '^VIX', '^TNX']
 
-def download_data_if_missing(path, ticker="AMZN", start="2017-01-01", end="2022-12-31"):
+def download_data_if_missing(path, ticker="AAPL", start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         print(f"{os.path.basename(path)} not found, downloading...")
@@ -33,8 +37,11 @@ def main():
 
     lstm_model, lstm_preds = train_lstm_model(data, split_ratio)
     gru_model, gru_preds = train_gru_model(data, split_ratio)
-    arima_model, arima_preds = train_arima_model(split_ratio)
-    rf_model, rf_preds = train_random_forest_model(split_ratio)
+    arima_model, arima_preds = train_arima_model(split_ratio, EXTERNAL_TICKERS, TICKER)
+    rf_model, rf_preds = train_random_forest_model(split_ratio, EXTERNAL_TICKERS, TICKER)
+    
+
+
 
     min_len = min(len(lstm_preds), len(gru_preds), len(arima_preds), len(rf_preds))
     lstm_preds = lstm_preds[-min_len:]

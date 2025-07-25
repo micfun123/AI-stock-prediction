@@ -9,11 +9,13 @@ import warnings
 from statsmodels.tools.sm_exceptions import HessianInversionWarning
 
 class ARIMAModel:
-    def __init__(self, split_ratio=0.80):
+    def __init__(self, split_ratio=0.80, external_tickers=None, ticker=None):
+        symbols = external_tickers.copy()
+        symbols.insert(0, ticker)
         self.config = {
-            "symbols": ['AMZN', '^GSPC', '^VIX', 'SHOP', '^TNX'],
-            "feature_cols": ['GSPC', 'VIX', 'SHOP', 'TNX'],
-            "target_col": 'AMZN',
+            "symbols": symbols,
+            "feature_cols": ['GSPC', 'VIX',  'TNX'],
+            "target_col": ticker,
             "start_date": '2018-01-01',
             "end_date": '2022-12-31',
             "train_split_ratio": split_ratio,
@@ -127,11 +129,11 @@ class ARIMAModel:
             np.save('predictions/actuals.npy', actuals.loc[predictions.index].values)
             print("Actual values for the test set saved to 'predictions/actuals.npy'")
 
-def train_arima_model(split_ratio):
+def train_arima_model(split_ratio, EXTERNAL_TICKERS, TICKER):
     print("--- Starting ARIMA Model Training and Prediction ---")
-    
-    model = ARIMAModel(split_ratio)
-    
+
+    model = ARIMAModel(split_ratio, EXTERNAL_TICKERS, TICKER)
+
     data = model.fetch_data()
     if data is None:
         return
