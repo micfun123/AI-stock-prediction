@@ -11,21 +11,22 @@ from meta_learner.train_meta import train_meta_learner, evaluate_meta_learner
 from learners.train_random_forest import train_random_forest_model
 
 
-
-TICKER = "AAPL"
+TICKER = "^DJI"
 DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
 split_ratio = 0.80
-EXTERNAL_TICKERS = ['^GSPC', '^VIX', '^TNX']
+EXTERNAL_TICKERS = ["^VIX", "^TNX", "^GSPC"]
 
-def download_data_if_missing(path, ticker="AAPL", start="2017-01-01", end="2022-12-31"):
+
+def download_data_if_missing(path, TICKER="AAPL", start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         print(f"{os.path.basename(path)} not found, downloading...")
-        yf.download(ticker, start=start, end=end).to_csv(path)
+        yf.download(TICKER, start=start, end=end).to_csv(path)
         print("Download complete.")
     else:
         print(f"{os.path.basename(path)} already exists.")
+
 
 def main():
     download_data_if_missing(DATA_PATH)
@@ -38,17 +39,18 @@ def main():
     lstm_model, lstm_preds = train_lstm_model(data, split_ratio)
     gru_model, gru_preds = train_gru_model(data, split_ratio)
     arima_model, arima_preds = train_arima_model(split_ratio, EXTERNAL_TICKERS, TICKER)
-    rf_model, rf_preds = train_random_forest_model(split_ratio, EXTERNAL_TICKERS, TICKER)
-    
-
-
+    rf_model, rf_preds = train_random_forest_model(
+        split_ratio, EXTERNAL_TICKERS, TICKER
+    )
 
     min_len = min(len(lstm_preds), len(gru_preds), len(arima_preds), len(rf_preds))
     lstm_preds = lstm_preds[-min_len:]
     gru_preds = gru_preds[-min_len:]
     arima_preds = arima_preds[-min_len:]
     rf_preds = rf_preds[-min_len:]
-    print(f"Predictions lengths: LSTM={len(lstm_preds)}, GRU={len(gru_preds)}, ARIMA={len(arima_preds)}, RF={len(rf_preds)}")
+    print(
+        f"Predictions lengths: LSTM={len(lstm_preds)}, GRU={len(gru_preds)}, ARIMA={len(arima_preds)}, RF={len(rf_preds)}"
+    )
     print(f"Minimum length for predictions: {min_len}")
 
     preds_matrix = np.vstack([lstm_preds, gru_preds, arima_preds, rf_preds]).T
@@ -64,7 +66,8 @@ def main():
     np.save(os.path.join(PREDICTIONS_DIR, "rf_predictions.npy"), rf_preds)
 
     train_meta_learner(preds_matrix, actuals)
-    evaluate_meta_learner(preds_matrix, actuals, data.index[-min_len:], scaler)
+    evaluate_meta_learner(preds_matrix, actuals, data.index[-min_len:], scaler, TICKER)
+
 
 if __name__ == "__main__":
     main()
