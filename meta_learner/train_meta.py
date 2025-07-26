@@ -1,41 +1,50 @@
-
 import os
 import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
+from sklearn.metrics import (
+    mean_squared_error,
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    r2_score,
+)
 import matplotlib.pyplot as plt
 
+
 def train_meta_learner(X, y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     model = xgb.XGBRegressor(
-        objective='reg:squarederror',
+        objective="reg:squarederror",
         n_estimators=1000,
         learning_rate=0.05,
         max_depth=4,
         subsample=0.8,
         colsample_bytree=0.8,
         random_state=42,
-        n_jobs=-1
+        n_jobs=-1,
     )
 
     model.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False)
 
     # Save the model
-    if not os.path.exists('meta_learner'):
-        os.makedirs('meta_learner')
-    model.save_model('meta_learner/xgboost_meta_learner.json')
+    if not os.path.exists("meta_learner"):
+        os.makedirs("meta_learner")
+    model.save_model("meta_learner/xgboost_meta_learner.json")
 
     return model, X_test, y_test
 
 
-def evaluate_meta_learner(X, y, dates=None, scaler=None):
+def evaluate_meta_learner(X, y, dates=None, scaler=None, Ticker="results"):
     model = xgb.XGBRegressor()
-    model.load_model('meta_learner/xgboost_meta_learner.json')
+    model.load_model("meta_learner/xgboost_meta_learner.json")
 
     # Time series split — no shuffling
-    _, X_test, _, y_test = train_test_split(X, y, test_size=0.40, random_state=42, shuffle=False) 
+    _, X_test, _, y_test = train_test_split(
+        X, y, test_size=0.40, random_state=42, shuffle=False
+    )
     preds = model.predict(X_test)
 
     # Inverse transform if scaler provided
@@ -59,21 +68,22 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None):
 
     if dates is not None:
         plt.figure(figsize=(14, 7))
-        plt.plot(dates[-len(y_test_inv):], y_test_inv, label='Actual', color='blue')
-        plt.plot(dates[-len(preds_inv):], preds_inv, label='Predicted', color='orange')
-        plt.title('Meta Learner Predictions vs Actuals')
-        plt.xlabel('Date')
-        plt.ylabel('Value')
+        plt.plot(dates[-len(y_test_inv) :], y_test_inv, label="Actual", color="blue")
+        plt.plot(dates[-len(preds_inv) :], preds_inv, label="Predicted", color="orange")
+        plt.title("Meta Learner Predictions vs Actuals")
+        plt.xlabel("Date")
+        plt.ylabel("Value")
         plt.legend()
+        plt.savefig(f"{Ticker}.png", bbox_inches="tight")
         plt.show()
+
     else:
         plt.figure(figsize=(14, 7))
-        plt.plot(y_test_inv, label='Actual', color='blue')
-        plt.plot(preds_inv, label='Predicted', color='orange')
-        plt.title('Meta Learner Predictions vs Actuals')
-        plt.xlabel('Index')
-        plt.ylabel('Value')
+        plt.plot(y_test_inv, label="Actual", color="blue")
+        plt.plot(preds_inv, label="Predicted", color="orange")
+        plt.title("Meta Learner Predictions vs Actuals")
+        plt.xlabel("Index")
+        plt.ylabel("Value")
         plt.legend()
+        plt.savefig(f"{Ticker}.png", bbox_inches="tight")
         plt.show()
-        
-

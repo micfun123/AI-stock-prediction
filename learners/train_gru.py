@@ -7,6 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 from copy import deepcopy as dc
 import os
 
+
 class GRUModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(GRUModel, self).__init__()
@@ -15,29 +16,31 @@ class GRUModel(nn.Module):
 
     def forward(self, x):
         batch_size = x.size(0)
-        h0 = torch.zeros(self.gru.num_layers, batch_size, self.gru.hidden_size).to(x.device)
+        h0 = torch.zeros(self.gru.num_layers, batch_size, self.gru.hidden_size).to(
+            x.device
+        )
         out, _ = self.gru(x, h0)
         return self.fc(out[:, -1, :])
 
 
 def prepare_dataframe_for_gru(df, n_steps):
     df = dc(df)
-    if 'Date' in df.columns:
-        df.set_index('Date', inplace=True)
+    if "Date" in df.columns:
+        df.set_index("Date", inplace=True)
 
-    col = 'Close_scaled'  # Use scaled close
+    col = "Close_scaled"  # Use scaled close
     print(f"Original df shape: {df.shape}")
     print(f"NaNs in {col} before shifting: {df[col].isna().sum()}")
 
     # Create lag columns for only Close_scaled
     for i in range(1, n_steps + 1):
-        df[f'{col}(t-{i})'] = df[col].shift(i)
+        df[f"{col}(t-{i})"] = df[col].shift(i)
 
     print(f"NaNs after shifting before dropna: {df.isna().sum().sum()}")
     print(f"Shape before dropping NaNs: {df.shape}")
 
     # Keep only current close and lagged columns (no other features)
-    cols_to_keep = [col] + [f'{col}(t-{i})' for i in range(1, n_steps + 1)]
+    cols_to_keep = [col] + [f"{col}(t-{i})" for i in range(1, n_steps + 1)]
     df = df[cols_to_keep]
 
     df.dropna(inplace=True)
@@ -68,16 +71,18 @@ def train_gru_model(data, split_ratio=0.95):
     X_train = torch.tensor(X_train_np.reshape((-1, lookback, 1)).copy()).float()
     Y_train = torch.tensor(Y_train_np.reshape((-1, 1)).copy()).float()
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = GRUModel(input_size=1, hidden_size=32, num_layers=2, output_size=1).to(device)
+    model = GRUModel(input_size=1, hidden_size=32, num_layers=2, output_size=1).to(
+        device
+    )
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     batch_size = 16
     train_dataset = TensorDataset(X_train, Y_train)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    
+
     epochs = 50
     for epoch in range(epochs):
         model.train()
@@ -92,10 +97,12 @@ def train_gru_model(data, split_ratio=0.95):
             print(f"GRU Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}")
 
     # Save model
-    torch.save(model.state_dict(), 'gru_model.pth')
+    torch.save(model.state_dict(), "gru_model.pth")
 
     # Predict
-    X_test = torch.tensor(X_test_np.reshape((-1, lookback, 1)).copy()).float().to(device)
+    X_test = (
+        torch.tensor(X_test_np.reshape((-1, lookback, 1)).copy()).float().to(device)
+    )
     model.eval()
     with torch.no_grad():
         test_predictions = model(X_test)
