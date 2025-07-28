@@ -7,7 +7,6 @@
                                           │
   Technical Indicators & Features ─►  RF ─┤
                                           │
-                    unsure ─► Stock-BERT ─┘
                                           ▼
                                 Meta Learner: XGBoost
                                   (Final Prediction)

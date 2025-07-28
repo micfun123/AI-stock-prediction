@@ -13,6 +13,7 @@ torchaudio
 
 # Sklearn & preprocessing
 scikit-learn
+pmdarima
 
 # For saving/plotting model internals
 xgboost
