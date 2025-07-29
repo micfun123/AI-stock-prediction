@@ -11,11 +11,11 @@ from meta_learner.train_meta import train_meta_learner, evaluate_meta_learner
 from learners.train_random_forest import train_random_forest_model
 
 
-TICKER = "^DJI"
+TICKER = "AMZN"
 DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
 split_ratio = 0.80
-EXTERNAL_TICKERS = ["^VIX", "^TNX", "^GSPC"]
+EXTERNAL_TICKERS = ["^VIX", "^TNX","^DJI","^GSPC"]
 
 
 def download_data_if_missing(path, TICKER="AAPL", start="2017-01-01", end="2022-12-31"):
