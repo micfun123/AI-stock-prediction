@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     # -- Step 1: Download Data --
     print(f"Downloading historical stock data for {TICKER}...")
-    stock_data = yf.download(TICKER, start="2022-01-01")
+    stock_data = yf.download(TICKER, start="2024-01-01")
     if stock_data.empty:
         print("Error: No data downloaded. Check ticker symbol or network connection.")
         exit()
@@ -147,9 +147,6 @@ if __name__ == "__main__":
     prediction_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=PREDICTION_DAYS)
 
     plt.plot(prediction_dates, prediction, 'ro-', label='Predicted Prices', markersize=8)
-    # plot real data
-    plt.xticks(rotation=45)
-    plt.plot(stock_data.index, stock_data['Close'], label='Actual Prices', color='blue', alpha=0.5)
     plt.axvline(x=last_date, color='gray', linestyle='--', label='Prediction Start')
     plt.title(f"{TICKER} Stock Price Prediction - Next {PREDICTION_DAYS} Days")
     plt.xlabel("Date")
