@@ -48,7 +48,7 @@ def prepare_dataframe_for_transformer(df, n_steps):
     df.dropna(inplace=True)
     return df
 
-def train_transformer_model(data, split_ratio=0.95):
+def train_transformer_model(data, split_ratio=0.80, skip_ratio=0.10):
     print("--- Starting Transformer Model Training ---")
     lookback = 10
     df = prepare_dataframe_for_transformer(data, lookback)
@@ -59,9 +59,11 @@ def train_transformer_model(data, split_ratio=0.95):
     y = df_scaled[:, 0]
     X = np.flip(X, axis=1).copy()
 
+
     split_index = int(len(X) * split_ratio)
-    X_train_np, X_test_np = X[:split_index], X[split_index:]
-    y_train_np, y_test_np = y[:split_index], y[split_index:]
+    skip_index = int(len(X) * skip_ratio)
+    X_train_np, X_test_np = X[skip_index:split_index], X[split_index:]
+    y_train_np, y_test_np = y[skip_index:split_index], y[split_index:]
 
     X_train = torch.tensor(X_train_np.reshape((-1, lookback, 1))).float()
     y_train = torch.tensor(y_train_np.reshape((-1, 1))).float()

@@ -51,7 +51,7 @@ def prepare_dataframe_for_gru(df, n_steps):
     return df
 
 
-def train_gru_model(data, split_ratio=0.95):
+def train_gru_model(data, split_ratio=0.80, skip_ratio=0.10):
     print("--- Starting GRU Model Training ---")
 
     lookback = 7
@@ -65,8 +65,9 @@ def train_gru_model(data, split_ratio=0.95):
     X = np.flip(X, axis=1)
 
     split_index = int(len(X) * split_ratio)
-    X_train_np, X_test_np = X[:split_index], X[split_index:]
-    Y_train_np, Y_test_np = Y[:split_index], Y[split_index:]
+    skip_index = int(len(X) * skip_ratio)
+    X_train_np, X_test_np = X[skip_index:split_index], X[split_index:]
+    Y_train_np, Y_test_np = Y[skip_index:split_index], Y[split_index:]
 
     X_train = torch.tensor(X_train_np.reshape((-1, lookback, 1)).copy()).float()
     Y_train = torch.tensor(Y_train_np.reshape((-1, 1)).copy()).float()

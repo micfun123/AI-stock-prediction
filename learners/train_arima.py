@@ -10,7 +10,7 @@ from statsmodels.tools.sm_exceptions import HessianInversionWarning
 
 
 class ARIMAModel:
-    def __init__(self, split_ratio=0.80, external_tickers=None, ticker=None):
+    def __init__(self, split_ratio=0.80, skip_ratio=0.10, external_tickers=None, ticker=None):
         # Sanitize all ticker names at the beginning
         clean_ticker = ticker.replace("^", "")
         clean_external_tickers = [t.replace("^", "") for t in external_tickers]
@@ -23,6 +23,7 @@ class ARIMAModel:
             "symbols": symbols,
             "feature_cols": clean_external_tickers,  # Use cleaned names
             "target_col": clean_ticker,  # Use cleaned name
+            "skip_ratio": skip_ratio,
             "start_date": "2018-01-01",
             "end_date": "2022-12-31",
             "train_split_ratio": split_ratio,
@@ -52,8 +53,13 @@ class ARIMAModel:
         # Clean column names by removing '^' prefix
         data.columns = [col.replace("^", "") for col in data.columns]
 
-        train_size = int(len(data) * self.config["train_split_ratio"])
-        train_df, test_df = data.iloc[:train_size], data.iloc[train_size:]
+        n = len(data)
+        train_size = int(n * self.config["train_split_ratio"])
+        skip_size = int(n * self.config["skip_ratio"])
+        test_size = n - train_size - skip_size
+
+        train_df = data.iloc[:train_size]
+        test_df = data.iloc[train_size + skip_size:] 
 
         # Ensure we're only using numerical data for scaling
         X_train_values = train_df[self.config["feature_cols"]].values
@@ -62,8 +68,6 @@ class ARIMAModel:
         # Scale features
         X_train_scaled = self.scaler.fit_transform(X_train_values)
         X_test_scaled = self.scaler.transform(X_test_values)
-
-        # Convert back to DataFrame with proper index
         X_train = pd.DataFrame(
             X_train_scaled, index=train_df.index, columns=self.config["feature_cols"]
         )
@@ -71,11 +75,13 @@ class ARIMAModel:
             X_test_scaled, index=test_df.index, columns=self.config["feature_cols"]
         )
 
-        # Get target values (This will now work correctly)
+        # Get target values
         y_train = train_df[self.config["target_col"]].values
         y_test = test_df[self.config["target_col"]].values
 
+        print(f"Train size: {len(train_df)}, Skip size: {skip_size}, Test size: {len(test_df)}")
         return y_train, y_test, X_train, X_test
+
 
     def find_best_order(self, y_train, X_train):
         print("Finding best ARIMA order...")
@@ -137,10 +143,10 @@ class ARIMAModel:
             print("Actual values for the test set saved to 'predictions/actuals.npy'")
 
 
-def train_arima_model(split_ratio, EXTERNAL_TICKERS, TICKER):
+def train_arima_model(split_ratio, skip_ratio, EXTERNAL_TICKERS, TICKER):
     print("--- Starting ARIMA Model Training and Prediction ---")
 
-    model = ARIMAModel(split_ratio, EXTERNAL_TICKERS, TICKER)
+    model = ARIMAModel(split_ratio, skip_ratio, EXTERNAL_TICKERS, TICKER)
 
     data = model.fetch_data()
     if data is None:
@@ -162,4 +168,4 @@ if __name__ == "__main__":
     # Example usage for testing
     TICKER = "^DJI"
     EXTERNAL_TICKERS = ["^GSPC", "^VIX", "^TNX"]
-    train_arima_model(0.8, EXTERNAL_TICKERS, TICKER)
+    train_arima_model(0.8, 0.1, EXTERNAL_TICKERS, TICKER)

@@ -14,7 +14,8 @@ from learners.train_transformer import train_transformer_model
 TICKER = "AMZN"
 DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
-split_ratio = 0.80
+train_ratio = 0.80
+skip_ratio = 0.10
 EXTERNAL_TICKERS = ["^VIX", "^TNX","^DJI","^GSPC"]
 
 def download_data_if_missing(path, TICKER="AAPL", start="2017-01-01", end="2022-12-31"):
@@ -33,13 +34,13 @@ def main():
     df = pd.read_csv(DATA_PATH)
     print(f"Dataset columns: {df.columns.tolist()}")
     data, scaler = load_and_preprocess_data(DATA_PATH)
-    lstm_model, lstm_preds = train_lstm_model(data, split_ratio)
-    gru_model, gru_preds = train_gru_model(data, split_ratio)
-    arima_model, arima_preds = train_arima_model(split_ratio, EXTERNAL_TICKERS, TICKER)
+    lstm_model, lstm_preds = train_lstm_model(data, train_ratio, skip_ratio)
+    gru_model, gru_preds = train_gru_model(data, train_ratio, skip_ratio)
+    arima_model, arima_preds = train_arima_model(train_ratio,skip_ratio, EXTERNAL_TICKERS, TICKER)
     rf_model, rf_preds = train_random_forest_model(
-        split_ratio, EXTERNAL_TICKERS, TICKER
+        train_ratio, skip_ratio, EXTERNAL_TICKERS, TICKER
     )
-    transformer_model, transformer_preds = train_transformer_model(data, split_ratio)
+    transformer_model, transformer_preds = train_transformer_model(data, train_ratio, skip_ratio)
 
    
 

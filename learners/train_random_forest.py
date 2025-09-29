@@ -8,7 +8,7 @@ import os
 
 
 class RandomForestModel:
-    def __init__(self, split_ratio=0.80, EXTERNAL_TICKERS=None, TICKER=None):
+    def __init__(self, split_ratio=0.80, skip_ratio=0.10, EXTERNAL_TICKERS=None, TICKER=None):
         print(EXTERNAL_TICKERS, TICKER)
         self.config = {
             "TICKER": TICKER,
@@ -23,6 +23,7 @@ class RandomForestModel:
                 "random_state": 42,
                 "n_jobs": -1,
             },
+            "SKIP_RATIO": skip_ratio,
         }
         self.model = None
         self.feature_names = None
@@ -95,16 +96,20 @@ class RandomForestModel:
         return features.dropna()
 
     def prepare_data(self, featured_data):
-        print("Preparing train/test split...")
+        print("Preparing train/skip/test split...")
         X = featured_data.drop("Target", axis=1)
         y = featured_data["Target"]
         self.feature_names = X.columns.tolist()
 
-        split_idx = int(len(featured_data) * self.config["TRAIN_TEST_SPLIT_RATIO"])
-        X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-        y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
+        n = len(featured_data)
+        train_end = int(n * self.config["TRAIN_TEST_SPLIT_RATIO"])   # 0.8n
+        skip_size = int(n * self.config["SKIP_RATIO"])               # 0.1n
+        test_start = train_end + skip_size                           # 0.9n
 
-        print(f"Train set size: {len(X_train)}, Test set size: {len(X_test)}")
+        X_train, y_train = X[:train_end], y[:train_end]
+        X_test, y_test   = X[test_start:], y[test_start:]  # last 10%
+
+        print(f"Train set size: {len(X_train)}, Skip size: {skip_size}, Test set size: {len(X_test)}")
         return X_train, y_train, X_test, y_test
 
     def train_model(self, X_train, y_train):
@@ -130,7 +135,7 @@ class RandomForestModel:
             print("Actual values for the test set saved to 'predictions/actuals.npy'")
 
 
-def train_random_forest_model(split_ratio, EXTERNAL_TICKERS=None, TICKER=None):
+def train_random_forest_model(split_ratio, skip_ratio, EXTERNAL_TICKERS=None, TICKER=None):
     """
     Main function to orchestrate the Random Forest model training and prediction process.
     This function will be called by your start.py script.
@@ -138,7 +143,7 @@ def train_random_forest_model(split_ratio, EXTERNAL_TICKERS=None, TICKER=None):
     print("--- Starting Random Forest Model Training and Prediction ---")
     print(f"Using external tickers: {EXTERNAL_TICKERS}, Target ticker: {TICKER}")
 
-    model_handler = RandomForestModel(split_ratio, EXTERNAL_TICKERS, TICKER)
+    model_handler = RandomForestModel(split_ratio, skip_ratio, EXTERNAL_TICKERS, TICKER)
 
     # 1. Get and process data
     combined_data = model_handler.fetch_and_merge_data()
