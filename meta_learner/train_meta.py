@@ -10,6 +10,7 @@ from sklearn.metrics import (
 )
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller, kpss
+import pandas as pd
 
 
 def train_meta_learner(X, y):
@@ -76,8 +77,12 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None, Ticker="results"):
     mape = mean_absolute_percentage_error(y_test_inv, preds_inv)
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test_inv, preds_inv)
+
+
     adf_result = adfuller(y_test_inv)
     KPSS_result = kpss(y_test_inv, regression='c', nlags="auto")
+
+
     directional_accuracy = np.mean(
         np.sign(np.diff(y_test_inv)) == np.sign(np.diff(preds_inv))
     )
@@ -86,6 +91,10 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None, Ticker="results"):
         np.isin(turning_points, np.where(np.diff(np.sign(np.diff(preds_inv
 ))))[0] + 1)
     ) if len(turning_points) > 0 else np.nan
+
+    rolling_vol = pd.Series(y_test_inv).pct_change().rolling(window=5).std()
+    std_errors = np.std(rolling_vol.dropna())
+    vol_adj_rmse = rmse / (1 + std_errors)
 
 
     print("######Results######")
@@ -117,11 +126,13 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None, Ticker="results"):
     print(f"R^2 Score: {r2:.4f}")
     print(f"Directional Accuracy: {directional_accuracy:.2f}")
     print(f"Turning Point Accuracy: {turning_point_accuracy:.2f}")
+    print(f"Volatility Adjusted RMSE: {vol_adj_rmse:.4f}")
+    
 
 
     #save all this to a text file
     with open(f"{Ticker}_meta_learner_evaluation.txt", "w") as f:
-        f.write("######Results######\n")
+        f.write(f"######Results###### {Ticker}\n")
         f.write("ADF Test Results:\n")
         f.write(f"ADF Statistic: {adf_result[0]}\n")
         f.write(f"p-value: {adf_result[1]}\n")
@@ -150,6 +161,8 @@ def evaluate_meta_learner(X, y, dates=None, scaler=None, Ticker="results"):
         f.write(f"R^2 Score: {r2:.4f}\n")
         f.write(f"Directional Accuracy: {directional_accuracy:.2f}%\n")
         f.write(f"Turning Point Accuracy: {turning_point_accuracy:.2f}%\n")
+        f.write(f"Volatility Adjusted RMSE: {vol_adj_rmse:.4f}\n")
+        f.write("\n")
         print(f"Meta learner evaluation results saved to '{Ticker}_meta_learner_evaluation.txt'")
 
     if dates is not None:

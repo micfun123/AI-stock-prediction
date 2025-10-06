@@ -11,14 +11,14 @@ from learners.train_random_forest import train_random_forest_model
 from learners.train_transformer import train_transformer_model
 
 
-TICKER = "AMZN"
+TICKER = "^GSPC"
 DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
 train_ratio = 0.80
 skip_ratio = 0.10
-EXTERNAL_TICKERS = ["^VIX", "^TNX","^DJI","^GSPC"]
+EXTERNAL_TICKERS = ["^VIX", "^TNX","^DJI"]
 
-def download_data_if_missing(path, TICKER="AAPL", start="2017-01-01", end="2022-12-31"):
+def download_data_if_missing(path, TICKER=TICKER, start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         print(f"{os.path.basename(path)} not found, downloading...")
