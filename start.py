@@ -11,12 +11,12 @@ from learners.train_random_forest import train_random_forest_model
 from learners.train_transformer import train_transformer_model
 
 
-TICKER = "^GSPC"
+TICKER = "^DJI"
 DATA_PATH = f"data/{TICKER}.csv"
 PREDICTIONS_DIR = "predictions"
 train_ratio = 0.80
 skip_ratio = 0.10
-EXTERNAL_TICKERS = ["^VIX", "^TNX","^DJI"]
+EXTERNAL_TICKERS = ["^VIX", "^TNX","^GSPC","^IXIC"]
 
 def download_data_if_missing(path, TICKER=TICKER, start="2017-01-01", end="2022-12-31"):
     if not os.path.exists(path):
