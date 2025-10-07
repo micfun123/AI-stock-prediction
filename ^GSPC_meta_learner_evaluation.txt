@@ -1,0 +1,27 @@
+######Results###### ^GSPC
+ADF Test Results:
+ADF Statistic: -2.2996201138107555
+p-value: 0.17209052164386235
+Critical Value (1%): -3.568485864
+Critical Value (5%): -2.92135992
+Critical Value (10%): -2.5986616
+Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
+
+KPSS Test Results:
+KPSS Statistic: 0.35367747941701494
+p-value: 0.09712177611335562
+Critical Value (10%): 0.347
+Critical Value (5%): 0.463
+Critical Value (2.5%): 0.574
+Critical Value (1%): 0.739
+Conclusion: The series is likely stationary.
+--- Meta Learner Evaluation ---
+Mean Squared Error: 284.0473
+Mean Absolute Error: 7.1906
+Mean Absolute Percentage Error: 0.0018
+RMSE: 16.8537
+R^2 Score: 0.9702
+Directional Accuracy: 0.92%
+Turning Point Accuracy: 0.86%
+Volatility Adjusted RMSE: 16.7680
+

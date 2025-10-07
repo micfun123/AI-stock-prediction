@@ -1,0 +1,27 @@
+######Results###### ^GDAXI
+ADF Test Results:
+ADF Statistic: -2.2587399285664858
+p-value: 0.18562051466369262
+Critical Value (1%): -3.5656240522121956
+Critical Value (5%): -2.920142229157715
+Critical Value (10%): -2.598014675124952
+Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
+
+KPSS Test Results:
+KPSS Statistic: 0.6752367654608331
+p-value: 0.015796657685378808
+Critical Value (10%): 0.347
+Critical Value (5%): 0.463
+Critical Value (2.5%): 0.574
+Critical Value (1%): 0.739
+Conclusion: The series is likely non-stationary.
+--- Meta Learner Evaluation ---
+Mean Squared Error: 3803.7260
+Mean Absolute Error: 24.4380
+Mean Absolute Percentage Error: 0.0018
+RMSE: 61.6744
+R^2 Score: 0.9874
+Directional Accuracy: 0.84%
+Turning Point Accuracy: 0.79%
+Volatility Adjusted RMSE: 61.4062
+

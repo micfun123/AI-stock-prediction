@@ -95,4 +95,4 @@ def analyze_stock_data(file_path):
         print(f"❌ An unexpected error occurred while processing {file_path}: {e}")
 
 
-analyze_stock_data("data/AMZN.csv")
+analyze_stock_data("data/^DJI.csv")
