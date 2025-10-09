@@ -1,27 +1,27 @@
 ######Results###### ^DJI
 ADF Test Results:
-ADF Statistic: -3.1111102291830908
-p-value: 0.025741832827174498
-Critical Value (1%): -3.568485864
-Critical Value (5%): -2.92135992
-Critical Value (10%): -2.5986616
-Conclusion: Strong evidence against the null hypothesis. The series is likely stationary.
+ADF Statistic: -2.3492081339473314
+p-value: 0.1565879040780367
+Critical Value (1%): -3.548493559596539
+Critical Value (5%): -2.912836594776334
+Critical Value (10%): -2.594129155766944
+Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
 
 KPSS Test Results:
-KPSS Statistic: 0.5900314681887084
-p-value: 0.023542593801026503
+KPSS Statistic: 0.8772293093572778
+p-value: 0.01
 Critical Value (10%): 0.347
 Critical Value (5%): 0.463
 Critical Value (2.5%): 0.574
 Critical Value (1%): 0.739
 Conclusion: The series is likely non-stationary.
 --- Meta Learner Evaluation ---
-Mean Squared Error: 16306.1171
-Mean Absolute Error: 58.5586
-Mean Absolute Percentage Error: 0.0018
-RMSE: 127.6954
-R^2 Score: 0.9815
-Directional Accuracy: 0.84%
-Turning Point Accuracy: 0.68%
-Volatility Adjusted RMSE: 127.1477
+Mean Squared Error: 14950.4076
+Mean Absolute Error: 50.6401
+Mean Absolute Percentage Error: 0.0015
+RMSE: 122.2719
+R^2 Score: 0.9929
+Directional Accuracy: 0.86%
+Turning Point Accuracy: 0.77%
+Volatility Adjusted RMSE: 121.7733
 

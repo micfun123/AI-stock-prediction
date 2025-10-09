@@ -1,27 +1,27 @@
-######Results###### ^IXIC
-ADF Test Results:
-ADF Statistic: -1.729139785334572
-p-value: 0.41616475421683
-Critical Value (1%): -3.568485864
-Critical Value (5%): -2.92135992
-Critical Value (10%): -2.5986616
-Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
+    ######Results###### ^IXIC
+    ADF Test Results:
+    ADF Statistic: -1.8957326184879904
+    p-value: 0.3340712771151889
+    Critical Value (1%): -3.548493559596539
+    Critical Value (5%): -2.912836594776334
+    Critical Value (10%): -2.594129155766944
+    Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
 
-KPSS Test Results:
-KPSS Statistic: 0.22126439348637364
-p-value: 0.1
-Critical Value (10%): 0.347
-Critical Value (5%): 0.463
-Critical Value (2.5%): 0.574
-Critical Value (1%): 0.739
-Conclusion: The series is likely stationary.
---- Meta Learner Evaluation ---
-Mean Squared Error: 3674.6224
-Mean Absolute Error: 26.1633
-Mean Absolute Percentage Error: 0.0023
-RMSE: 60.6187
-R^2 Score: 0.9654
-Directional Accuracy: 0.92%
-Turning Point Accuracy: 0.87%
-Volatility Adjusted RMSE: 60.2301
+    KPSS Test Results:
+    KPSS Statistic: 0.21673071733286692
+    p-value: 0.1
+    Critical Value (10%): 0.347
+    Critical Value (5%): 0.463
+    Critical Value (2.5%): 0.574
+    Critical Value (1%): 0.739
+    Conclusion: The series is likely stationary.
+    --- Meta Learner Evaluation ---
+    Mean Squared Error: 5501.2650
+    Mean Absolute Error: 33.2692
+    Mean Absolute Percentage Error: 0.0030
+    RMSE: 74.1705
+    R^2 Score: 0.9474
+    Directional Accuracy: 0.86%
+    Turning Point Accuracy: 0.79%
+    Volatility Adjusted RMSE: 73.7281
 

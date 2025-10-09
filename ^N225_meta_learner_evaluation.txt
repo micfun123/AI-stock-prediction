@@ -1,14 +1,14 @@
 ######Results###### ^N225
 ADF Test Results:
-ADF Statistic: -1.2012217852415017
-p-value: 0.6730699100548299
-Critical Value (1%): -3.562878534649522
-Critical Value (5%): -2.918973284023669
-Critical Value (10%): -2.597393446745562
+ADF Statistic: -1.4022118576149538
+p-value: 0.5812152679979197
+Critical Value (1%): -3.5443688564814813
+Critical Value (5%): -2.9110731481481484
+Critical Value (10%): -2.5931902777777776
 Conclusion: Weak evidence against the null hypothesis. The series is likely non-stationary.
 
 KPSS Test Results:
-KPSS Statistic: 0.3121416000711427
+KPSS Statistic: 0.2842187328561945
 p-value: 0.1
 Critical Value (10%): 0.347
 Critical Value (5%): 0.463
@@ -16,12 +16,12 @@ Critical Value (2.5%): 0.574
 Critical Value (1%): 0.739
 Conclusion: The series is likely stationary.
 --- Meta Learner Evaluation ---
-Mean Squared Error: 14046.5674
-Mean Absolute Error: 53.5627
-Mean Absolute Percentage Error: 0.0019
-RMSE: 118.5182
-R^2 Score: 0.9632
-Directional Accuracy: 0.85%
-Turning Point Accuracy: 0.81%
-Volatility Adjusted RMSE: 118.1177
+Mean Squared Error: 24427.5809
+Mean Absolute Error: 53.6110
+Mean Absolute Percentage Error: 0.0020
+RMSE: 156.2933
+R^2 Score: 0.9375
+Directional Accuracy: 0.90%
+Turning Point Accuracy: 0.90%
+Volatility Adjusted RMSE: 155.6816
 
